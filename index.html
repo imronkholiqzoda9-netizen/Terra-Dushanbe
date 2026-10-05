@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERRA DUSHANBE | Ресторан премиум-класса</title>
+    <meta name="description" content="TERRA DUSHANBE — изысканный ресторан авторской и европейской кухни в самом сердце Душанбе. Уютная атмосфера, свежие продукты, премиальный сервис.">
+    
+    <!-- Open Graph SEO -->
+    <meta property="og:title" content="TERRA DUSHANBE | Ресторан премиум-класса">
+    <meta property="og:description" content="Изысканная кухня, роскошный интерьер и безупречный сервис в Душанбе.">
+    <meta property="og:type" content="website">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            DEFAULT: '#d4af37',
+                            light: '#e6c55d',
+                            dark: '#aa8c2c',
+                            metallic: '#c5a059'
+                        },
+                        darkBg: '#0b0b0b',
+                        cardBg: '#141210',
+                        espresso: '#1a1412'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Leaflet CSS for Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <!-- Custom Luxury Styling -->
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0b0b;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0b0b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5a059;
+            border-radius: 4px;
+        }
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(20, 18, 16, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+        .glass-nav {
+            background: rgba(11, 11, 11, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        /* Gold gradient text */
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #f3e5ab 0%, #c5a059 50%, #99742a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Card hover glow */
+        .dish-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dish-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -15px rgba(197, 160, 89, 0.25);
+            border-color: rgba(197, 160, 89, 0.6);
+        }
+        .dish-card:hover img {
+            transform: scale(1.08);
+        }
+        /* Leaflet map dark filter adjustment */
+        .leaflet-layer, .leaflet-control-zoom-in, .leaflet-control-zoom-out, .leaflet-attribution-aux {
+            filter: brightness(0.8) invert(1) contrast(1.2) hue-rotate(200deg) saturate(0.3);
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-gray-100 antialiased">
+
+    <script>
+        // Restaurant Configuration Data
+        const restaurant = {
+            name: "TERRA DUSHANBE",
+            phone: "+992945453333",
+            whatsapp: "https://wa.me/992945453333",
+            instagram: "https://www.instagram.com/terra.dushanbe?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==",
+            telegram: "https://t.me/terradushanbe",
+            address: "пр. Рудаки 35, Душанбе, Таджикистан",
+            email: "info@terradushanbe.tj",
+            workingHours: "08:00 — 00:00"
+        };
+    </script>
+
+    <!-- Navbar -->
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center bg-espresso group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-utensils text-gold"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-serif text-xl sm:text-2xl font-bold tracking-widest text-gold-gradient">TERRA</span>
+                    <span class="text-[10px] tracking-[0.25em] text-gray-400 uppercase -mt-1">Dushanbe</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#hero" class="text-sm font-medium hover:text-gold transition-colors duration-200">Главная</a>
+                <a href="#about" class="text-sm font-medium hover:text-gold transition-colors duration-200">О ресторане</a>
+                <a href="#menu" class="text-sm font-medium hover:text-gold transition-colors duration-200">Меню</a>
+                <a href="#gallery" class="text-sm font-medium hover:text-gold transition-colors duration-200">Галерея</a>
+                <a href="#contact" class="text-sm font-medium hover:text-gold transition-colors duration-200">Контакты</a>
+            </nav>
+
+            <!-- CTA Desktop -->
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="tel:+992945453333" class="text-xs text-gray-300 hover:text-gold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-phone text-gold"></i>
+                    <span class="font-semibold">+992 94 545 3333</span>
+                </a>
+                <a href="#reservation" class="bg-gradient-to-r from-gold-dark via-gold to-gold-light text-black font-semibold px-6 py-2.5 rounded-full text-sm shadow-lg hover:opacity-95 hover:scale-105 transition-all duration-300">
+                    Забронировать столик
+                </a>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="menu-btn" class="md:hidden text-gold text-2xl focus:outline-none p-2" aria-label="Меню">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-t border-gold/20 px-6 py-6 space-y-4 animate-fadeIn">
+            <a href="#hero" class="block text-lg font-medium hover:text-gold transition-colors mobile-link">Главная</a>
+            <a href="#about" class="block text-lg font-medium hover:text-gold transition-colors mobile-link">О ресторане</a>
+            <a href="#menu" class="block text-lg font-medium hover:text-gold transition-colors mobile-link">Меню</a>
+            <a href="#gallery" class="block text-lg font-medium hover:text-gold transition-colors mobile-link">Галерея</a>
+            <a href="#contact" class="block text-lg font-medium hover:text-gold transition-colors mobile-link">Контакты</a>
+            <div class="pt-4 border-t border-gray-800 flex flex-col space-y-3">
+                <a href="tel:+992945453333" class="text-gold font-medium flex items-center gap-3">
+                    <i class="fa-solid fa-phone"></i> +992 94 545 3333
+                </a>
+                <a href="#reservation" class="w-full text-center bg-gold text-black font-semibold py-3 rounded-full text-sm mobile-link">
+                    Забронировать столик
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Background Image with Gradient Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2070&auto=format&fit=crop" 
+                 alt="TERRA Dushanbe Interior & Dish" 
+                 class="w-full h-full object-cover object-center scale-105 animate-pulse duration-[10000ms]"
+                 onerror="this.src='https://placehold.co/1920x1080/141210/c5a059?text=TERRA+DUSHANBE'">
+            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-black/70 to-black/50"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center py-20 flex flex-col items-center">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-gold/40 text-gold text-xs uppercase tracking-[0.3em] mb-6 opacity-0 animate-[fadeInUp_1s_ease-out_forwards]">
+                <i class="fa-solid fa-star text-[10px]"></i> Ресторан авторской кухни в Душанбе
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-wider text-white mb-6 opacity-0 animate-[fadeInUp_1s_ease-out_0.2s_forwards]">
+                TERRA <span class="text-gold-gradient">DUSHANBE</span>
+            </h1>
+
+            <!-- Tagline -->
+            <p class="max-w-2xl text-lg sm:text-xl text-gray-300 font-light mb-10 opacity-0 animate-[fadeInUp_1s_ease-out_0.4s_forwards] leading-relaxed">
+                Где традиции высокой кухни встречаются с атмосферой современного искусства и безупречным вкусом.
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto opacity-0 animate-[fadeInUp_1s_ease-out_0.6s_forwards]">
+                <a href="#menu" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light text-black font-semibold text-sm uppercase tracking-wider shadow-xl hover:scale-105 transition-all duration-300 text-center">
+                    Посмотреть меню
+                </a>
+                <a href="#reservation" class="w-full sm:w-auto px-8 py-4 rounded-full glass-panel text-white hover:text-gold hover:border-gold font-semibold text-sm uppercase tracking-wider transition-all duration-300 text-center">
+                    Забронировать столик
+                </a>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce hidden sm:block">
+                <a href="#about" class="text-gold text-xl opacity-80 hover:opacity-100">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-espresso relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                
+                <!-- Images Grid -->
+                <div class="relative grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1000&auto=format&fit=crop" 
+                             alt="Interior" 
+                             class="rounded-2xl shadow-2xl object-cover h-64 sm:h-80 w-full border border-gold/20"
+                             loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop" 
+                             alt="Atmosphere" 
+                             class="rounded-2xl shadow-2xl object-cover h-48 sm:h-60 w-full border border-gold/20"
+                             loading="lazy">
+                    </div>
+                    <div class="space-y-4 pt-8">
+                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1000&auto=format&fit=crop" 
+                             alt="Chef dish" 
+                             class="rounded-2xl shadow-2xl object-cover h-48 sm:h-60 w-full border border-gold/20"
+                             loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1000&auto=format&fit=crop" 
+                             alt="Restaurant vibe" 
+                             class="rounded-2xl shadow-2xl object-cover h-64 sm:h-80 w-full border border-gold/20"
+                             loading="lazy">
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="space-y-6">
+                    <div class="inline-flex items-center gap-2 text-gold uppercase tracking-[0.2em] text-xs font-semibold">
+                        <i class="fa-solid fa-gem"></i> О нашем ресторане
+                    </div>
+                    <h2 class="font-serif text-3xl sm:text-5xl font-bold text-white leading-tight">
+                        Искусство гастрономии в каждом блюде
+                    </h2>
+                    <p class="text-gray-300 font-light leading-relaxed">
+                        Ресторан <strong class="text-gold font-medium">TERRA DUSHANBE</strong> создан для истинных ценителей гастрономического искусства. Мы объединили утонченные рецепты европейской и восточной кухни с авторской подачей шеф-повара.
+                    </p>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Наша атмосфера — это идеальный баланс элегантного дизайна, приглушенного света, живой музыки и заботливого сервиса. Каждое посещение превращается в незабываемое событие.
+                    </p>
+
+                    <!-- Features Checklist -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-center space-x-3 bg-darkBg/60 p-3.5 rounded-xl border border-gold/10">
+                            <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-200">Свежие продукты</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-darkBg/60 p-3.5 rounded-xl border border-gold/10">
+                            <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-200">Профессиональные повара</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-darkBg/60 p-3.5 rounded-xl border border-gold/10">
+                            <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-200">Уютная атмосфера</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-darkBg/60 p-3.5 rounded-xl border border-gold/10">
+                            <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-200">Быстрое обслуживание</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-24 bg-darkBg relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-gold uppercase tracking-[0.25em] text-xs font-semibold">Изысканное меню</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white mt-2 mb-4">Наши кулинарные шедевры</h2>
+                <div class="w-24 h-0.5 bg-gold mx-auto"></div>
+            </div>
+
+            <!-- Categories Tabs -->
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-12" id="menu-tabs">
+                <button onclick="filterMenu('all')" class="menu-tab active-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-gold text-black shadow-lg">Все</button>
+                <button onclick="filterMenu('appetizers')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Закуски</button>
+                <button onclick="filterMenu('salads')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Салаты</button>
+                <button onclick="filterMenu('mains')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Основные блюда</button>
+                <button onclick="filterMenu('soups')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Супы</button>
+                <button onclick="filterMenu('pizza')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Пицца</button>
+                <button onclick="filterMenu('desserts')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Десерты</button>
+                <button onclick="filterMenu('drinks')" class="menu-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 glass-panel text-gray-300 hover:text-gold">Напитки</button>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-24 bg-espresso relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-gold uppercase tracking-[0.25em] text-xs font-semibold">Атмосфера</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white mt-2 mb-4">Галерея ресторана</h2>
+                <div class="w-24 h-0.5 bg-gold mx-auto"></div>
+            </div>
+
+            <!-- Masonry Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[220px]">
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer border border-gold/10" onclick="openLightbox(this.querySelector('img').src)">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop" alt="Gallery 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i class="fa-solid fa-expand text-gold text-2xl"></i>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer border border-gold/10 sm:row-span-2" onclick="openLightbox(this.querySelector('img').src)">
+                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop" alt="Gallery 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i class="fa-solid fa-expand text-gold text-2xl"></i>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer border border-gold/10" onclick="openLightbox(this.querySelector('img').src)">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1000&auto=format&fit=crop" alt="Gallery 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i class="fa-solid fa-expand text-gold text-2xl"></i>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer border border-gold/10" onclick="openLightbox(this.querySelector('img').src)">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1000&auto=format&fit=crop" alt="Gallery 4" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i class="fa-solid fa-expand text-gold text-2xl"></i>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer border border-gold/10 sm:col-span-2" onclick="openLightbox(this.querySelector('img').src)">
+                    <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1000&auto=format&fit=crop" alt="Gallery 5" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i class="fa-solid fa-expand text-gold text-2xl"></i>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer border border-gold/10" onclick="openLightbox(this.querySelector('img').src)">
+                    <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1000&auto=format&fit=crop" alt="Gallery 6" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i class="fa-solid fa-expand text-gold text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fullscreen Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl hover:text-gold focus:outline-none z-50">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="Fullscreen Lightbox" class="max-w-full max-h-[90vh] object-contain rounded-xl border border-gold/30">
+    </div>
+
+    <!-- Reservation Section -->
+    <section id="reservation" class="py-24 bg-darkBg relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel p-8 sm:p-12 rounded-3xl shadow-2xl border border-gold/30 relative">
+                
+                <div class="text-center max-w-xl mx-auto mb-10">
+                    <span class="text-gold uppercase tracking-[0.25em] text-xs font-semibold">Бронирование</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white mt-2 mb-3">Забронировать столик</h2>
+                    <p class="text-gray-400 text-sm">Заполните форму ниже, и наш администратор свяжется с вами для подтверждения брони.</p>
+                </div>
+
+                <form id="reservation-form" onsubmit="handleReservation(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-300 mb-2 font-medium">Ваше имя *</label>
+                            <input type="text" id="res-name" required placeholder="Бахром" 
+                                   class="w-full bg-espresso border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-300 mb-2 font-medium">Номер телефона *</label>
+                            <input type="tel" id="res-phone" required placeholder="+992 9X XXX XXXX" 
+                                   class="w-full bg-espresso border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-300 mb-2 font-medium">Количество гостей *</label>
+                            <select id="res-guests" required class="w-full bg-espresso border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors text-sm">
+                                <option value="1 гость">1 гость</option>
+                                <option value="2 гостя" selected>2 гостя</option>
+                                <option value="3-4 гостя">3-4 гостя</option>
+                                <option value="5-8 гостей">5-8 гостей</option>
+                                <option value="Банкет (8+ гостей)">Банкет (8+ гостей)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-300 mb-2 font-medium">Дата *</label>
+                            <input type="date" id="res-date" required 
+                                   class="w-full bg-espresso border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-300 mb-2 font-medium">Время *</label>
+                            <input type="time" id="res-time" required value="19:00"
+                                   class="w-full bg-espresso border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-300 mb-2 font-medium">Комментарий / пожелания</label>
+                        <textarea id="res-comment" rows="3" placeholder="Уголок у окна, детское кресло, день рождения..." 
+                                  class="w-full bg-espresso border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors text-sm resize-none"></textarea>
+                    </div>
+
+                    <div class="text-center pt-2">
+                        <button type="submit" class="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light text-black font-semibold uppercase tracking-wider text-sm shadow-xl hover:scale-105 transition-all duration-300">
+                            Забронировать
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Success Message Box -->
+                <div id="success-msg" class="hidden mt-6 p-6 rounded-2xl bg-gold/10 border border-gold text-center animate-fadeIn">
+                    <i class="fa-solid fa-circle-check text-gold text-3xl mb-2"></i>
+                    <h3 class="font-serif text-xl font-bold text-white mb-1">Спасибо! Ваша заявка отправлена.</h3>
+                    <p class="text-gray-300 text-sm">Мы скоро свяжемся с вами для подтверждения бронирования столика.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section class="py-16 bg-espresso border-t border-b border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <span class="text-gold uppercase tracking-[0.25em] text-xs font-semibold">Будем на связи</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white mt-2 mb-8">Мы в социальных сетях</h2>
+            
+            <div class="flex items-center justify-center gap-6">
+                <!-- Instagram -->
+                <a id="soc-instagram" href="#" target="_blank" class="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center text-gold text-2xl hover:scale-110 hover:bg-gold hover:text-black transition-all duration-300 shadow-lg" title="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <!-- WhatsApp -->
+                <a id="soc-whatsapp" href="#" target="_blank" class="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center text-gold text-2xl hover:scale-110 hover:bg-gold hover:text-black transition-all duration-300 shadow-lg" title="WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <!-- Telegram -->
+                <a id="soc-telegram" href="#" target="_blank" class="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center text-gold text-2xl hover:scale-110 hover:bg-gold hover:text-black transition-all duration-300 shadow-lg" title="Telegram">
+                    <i class="fa-brands fa-telegram"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacts & Interactive Map Section -->
+    <section id="contact" class="py-24 bg-darkBg relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-gold uppercase tracking-[0.25em] text-xs font-semibold">Контакты</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white mt-2 mb-4">Ждем вас в гости</h2>
+                <div class="w-24 h-0.5 bg-gold mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                <!-- Info Cards -->
+                <div class="space-y-6 flex flex-col justify-between">
+                    <div class="glass-panel p-6 rounded-2xl border border-gold/20 flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold/20 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs uppercase tracking-wider text-gray-400 mb-1">Телефон</h4>
+                            <a id="contact-phone" href="#" class="text-white font-semibold hover:text-gold transition-colors"></a>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl border border-gold/20 flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold/20 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs uppercase tracking-wider text-gray-400 mb-1">Адрес</h4>
+                            <p id="contact-address" class="text-white font-semibold"></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl border border-gold/20 flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold/20 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs uppercase tracking-wider text-gray-400 mb-1">Время работы</h4>
+                            <p id="contact-hours" class="text-white font-semibold"></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl border border-gold/20 flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold/20 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs uppercase tracking-wider text-gray-400 mb-1">Email</h4>
+                            <a id="contact-email" href="#" class="text-white font-semibold hover:text-gold transition-colors"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaflet Interactive Map -->
+                <div class="lg:col-span-2 rounded-3xl overflow-hidden border border-gold/30 h-[400px] lg:h-auto shadow-2xl relative">
+                    <div id="map" class="w-full h-full min-h-[400px]"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Col 1 -->
+                <div class="space-y-4 md:col-span-1">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full border border-gold flex items-center justify-center bg-espresso">
+                            <i class="fa-solid fa-utensils text-gold text-xs"></i>
+                        </div>
+                        <span id="footer-brand" class="font-serif text-xl font-bold tracking-widest text-gold-gradient"></span>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Ресторан высокой кухни в Душанбе. Авторские блюда, роскошная атмосфера и безупречный сервис для каждого гостя.
+                    </p>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-widest text-gold font-semibold">Навигация</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#hero" class="hover:text-gold transition-colors">Главная</a></li>
+                        <li><a href="#about" class="hover:text-gold transition-colors">О ресторане</a></li>
+                        <li><a href="#menu" class="hover:text-gold transition-colors">Меню</a></li>
+                        <li><a href="#gallery" class="hover:text-gold transition-colors">Галерея</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-widest text-gold font-semibold">Контакты</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li id="footer-phone"></li>
+                        <li id="footer-address"></li>
+                        <li id="footer-hours"></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4 -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-widest text-gold font-semibold">Социальные сети</h4>
+                    <div class="flex space-x-3 pt-1">
+                        <a id="footer-soc-ig" href="#" target="_blank" class="w-10 h-10 rounded-xl glass-panel flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a id="footer-soc-wa" href="#" target="_blank" class="w-10 h-10 rounded-xl glass-panel flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                        <a id="footer-soc-tg" href="#" target="_blank" class="w-10 h-10 rounded-xl glass-panel flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all">
+                            <i class="fa-brands fa-telegram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-900 pt-8 text-center text-xs text-gray-500">
+                <p>&copy; 2026 <span id="footer-brand-copy"></span>. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Floating Action Buttons -->
+    <div class="fixed bottom-6 right-6 z-40 flex flex-col space-y-3 sm:hidden">
+        <a id="float-wa" href="#" target="_blank" class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center shadow-2xl text-xl" title="WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a id="float-tg" href="#" target="_blank" class="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-2xl text-lg" title="Telegram">
+            <i class="fa-brands fa-telegram"></i>
+        </a>
+        <a id="float-call" href="#" class="w-12 h-12 rounded-full bg-gold text-black flex items-center justify-center shadow-2xl text-lg" title="Позвонить">
+            <i class="fa-solid fa-phone"></i>
+        </a>
+    </div>
+
+    <!-- Dish Details Modal -->
+    <div id="dish-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 sm:p-8 rounded-3xl border border-gold/30 relative animate-fadeIn">
+            <button onclick="closeDishModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gold text-2xl focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content" class="space-y-4">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS for Interactive Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // Menu Data Array
+        const menuItems = [
+            {
+                id: 1,
+                category: 'appetizers',
+                name: 'Карпаччо из мраморной говядины',
+                description: 'Тончайшие слайсы мраморной говядины с каперсами, рукколой, трюфельным маслом и пармезаном выдержки 24 месяца.',
+                price: '135 сомони',
+                image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 2,
+                category: 'appetizers',
+                name: 'Тартар из лосося с авокадо',
+                description: 'Свежайший норвежский лосось с авокадо, спелым манго, лаймово-имбирной заправкой и красной икрой.',
+                price: '150 сомони',
+                image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 3,
+                category: 'salads',
+                name: 'Цезарь с тигровыми креветками',
+                description: 'Хрустящий романо, сочные тигровые креветки на гриле, фирменный соус Цезарь, перепелиные яйца и гренки из бриоши.',
+                price: '120 сомони',
+                image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 4,
+                category: 'salads',
+                name: 'Теплый салат с телятиной и грибами',
+                description: 'Нежная телятина обжаренная с белыми грибами и шампиньонами на подушке из микс-салата с ореховым соусом.',
+                price: '115 сомони',
+                image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 5,
+                category: 'mains',
+                name: 'Стейк Рибай премиум',
+                description: 'Классический стейк из выдержанной говядины зернового откорма со сливочным соусом из белых грибов.',
+                price: '320 сомони',
+                image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 6,
+                category: 'mains',
+                name: 'Черная треска с шафрановым соусом',
+                description: 'Филе черной трески, запеченное в нежном соусе на основе шафрана с брокколини и томатами черри.',
+                price: '280 сомони',
+                image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 7,
+                category: 'soups',
+                name: 'Трюфельный крем-суп с белыми грибами',
+                description: 'Бархатистый крем-суп из отборных белых грибов с капелькой выдержанного трюфельного масла и гренками.',
+                price: '75 сомони',
+                image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 8,
+                category: 'pizza',
+                name: 'Пицца «Четыре сыра с трюфельным медом»',
+                description: 'Моцарелла, горгонзола, пармезан, рикотта, ароматные травы и капли дикого трюфельного меда.',
+                price: '140 сомони',
+                image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 9,
+                category: 'desserts',
+                name: 'Шоколадный фондант с мороженым',
+                description: 'Теплый бисквит с жидким бельгийским шоколадом внутри в сопровождении шарика ванильного пломбира.',
+                price: '70 сомони',
+                image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop'
+            },
+            {
+                id: 10,
+                category: 'drinks',
+                name: 'Фирменный лимонад Манго-Маракуйя',
+                description: 'Освежающий авторский микс из спелого манго, пюре маракуйи, свежей мяты и газированной воды.',
+                price: '45 сомони',
+                image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop'
+            }
+        ];
+
+        // Populate configuration data dynamically on load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Navbar / Header / Contacts / Footer bindings
+            document.getElementById('contact-phone').innerText = restaurant.phone;
+            document.getElementById('contact-phone').href = `tel:${restaurant.phone}`;
+            document.getElementById('contact-address').innerText = restaurant.address;
+            document.getElementById('contact-hours').innerText = restaurant.workingHours;
+            document.getElementById('contact-email').innerText = restaurant.email;
+            document.getElementById('contact-email').href = `mailto:${restaurant.email}`;
+
+            document.getElementById('footer-brand').innerText = restaurant.name;
+            document.getElementById('footer-brand-copy').innerText = restaurant.name;
+            document.getElementById('footer-phone').innerText = `📞 ${restaurant.phone}`;
+            document.getElementById('footer-address').innerText = `📍 ${restaurant.address}`;
+            document.getElementById('footer-hours').innerText = `🕐 ${restaurant.workingHours}`;
+
+            document.getElementById('soc-instagram').href = restaurant.instagram;
+            document.getElementById('soc-whatsapp').href = restaurant.whatsapp;
+            document.getElementById('soc-telegram').href = restaurant.telegram;
+
+            document.getElementById('footer-soc-ig').href = restaurant.instagram;
+            document.getElementById('footer-soc-wa').href = restaurant.whatsapp;
+            document.getElementById('footer-soc-tg').href = restaurant.telegram;
+
+            document.getElementById('float-wa').href = restaurant.whatsapp;
+            document.getElementById('float-tg').href = restaurant.telegram;
+            document.getElementById('float-call').href = `tel:${restaurant.phone}`;
+
+            // Set min date for reservation to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('res-date').min = today;
+            document.getElementById('res-date').value = today;
+
+            // Render Menu
+            renderMenu('all');
+
+            // Initialize Leaflet Map centered on Dushanbe (Rudaki avenue 35)
+            // Coordinates for Rudaki Ave 35, Dushanbe ~ 38.5755, 68.7801
+            const map = L.map('map').setView([38.5755, 68.7801], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            const marker = L.marker([38.5755, 68.7801]).addTo(map);
+            marker.bindPopup("<b>TERRA DUSHANBE</b><br>пр. Рудаки 35").openPopup();
+
+            // Mobile menu toggle
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        });
+
+        // Render Menu Function
+        function renderMenu(category) {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' 
+                ? menuItems 
+                : menuItems.filter(item => item.category === category);
+
+            filtered.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `dish-card glass-panel rounded-3xl overflow-hidden border border-gold/20 flex flex-col justify-between opacity-0 animate-[fadeInUp_0.6s_ease-out_${index * 0.1}s_forwards]`;
+                card.innerHTML = `
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-500" loading="lazy" onerror="this.src='https://placehold.co/600x400/141210/c5a059?text=TERRA+DUSHANBE'">
+                        <div class="absolute top-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-gold/35 text-gold font-bold text-sm">
+                            ${item.price}
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                        <div>
+                            <h3 class="font-serif text-xl font-bold text-white mb-2">${item.name}</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed line-clamp-2">${item.description}</p>
+                        </div>
+                        <button onclick='openDishDetail(${JSON.stringify(item)})' class="w-full py-2.5 rounded-xl border border-gold/40 text-gold hover:bg-gold hover:text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300">
+                            Подробнее
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter tabs styling switcher
+        function filterMenu(category) {
+            document.querySelectorAll('.menu-tab').forEach(btn => {
+                btn.classList.remove('bg-gold', 'text-black', 'shadow-lg');
+                btn.classList.add('glass-panel', 'text-gray-300');
+            });
+            event.target.classList.remove('glass-panel', 'text-gray-300');
+            event.target.classList.add('bg-gold', 'text-black', 'shadow-lg');
+            renderMenu(category);
+        }
+
+        // Lightbox Functions
+        function openLightbox(imgSrc) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = imgSrc;
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('flex');
+            lightbox.classList.add('hidden');
+        }
+
+        // Dish Detail Modal Functions
+        function openDishDetail(item) {
+            const modal = document.getElementById('dish-modal');
+            const content = document.getElementById('modal-content');
+            content.innerHTML = `
+                <div class="relative h-64 rounded-2xl overflow-hidden mb-4 border border-gold/20">
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4 bg-black/80 px-4 py-1.5 rounded-full border border-gold text-gold font-bold text-sm">
+                        ${item.price}
+                    </div>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-white">${item.name}</h3>
+                <p class="text-gray-300 text-sm leading-relaxed">${item.description}</p>
+                <div class="pt-4 flex items-center justify-between">
+                    <a href="#reservation" onclick="closeDishModal()" class="w-full text-center py-3 rounded-xl bg-gold text-black font-semibold text-xs uppercase tracking-wider hover:opacity-95 transition-all">
+                        Забронировать столик и попробовать
+                    </a>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDishModal() {
+            const modal = document.getElementById('dish-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Reservation Form Handler
+        function handleReservation(e) {
+            e.preventDefault();
+            const form = document.getElementById('reservation-form');
+            const successMsg = document.getElementById('success-msg');
+            
+            form.style.display = 'none';
+            successMsg.classList.remove('hidden');
+        }
+    </script>
+
+    <!-- Keyframe Animation Styles -->
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</body>
+</html>
